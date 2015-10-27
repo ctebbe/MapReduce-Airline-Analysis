@@ -1,5 +1,6 @@
 package io.tebbe;
 
+import io.tebbe.analysis.Question1;
 import io.tebbe.results.SortByValue;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
@@ -30,6 +31,24 @@ public class Main {
         Configuration conf = new Configuration();
         long secs = 1800000;
         conf.setLong("mapred.task.timeout", secs);
+    }
+
+    private void runQuestion1(Configuration conf) throws IOException, ClassNotFoundException, InterruptedException {
+        Job question1 = Job.getInstance(conf);
+        question1.setJarByClass(Question1.class);
+        question1.setOutputKeyClass(Text.class);
+        question1.setOutputValueClass(Text.class);
+
+        question1.setMapperClass(Question1.Map.class);
+        question1.setMapOutputValueClass(Text.class);
+        question1.setInputFormatClass(TextInputFormat.class);
+
+        question1.setReducerClass(Question1.Reduce.class);
+        question1.setOutputFormatClass(TextOutputFormat.class);
+
+        FileInputFormat.addInputPath(question1, new Path("/data/main"));
+        FileOutputFormat.setOutputPath(question1, new Path("/question1"));
+        question1.waitForCompletion(true);
     }
 
     private void runResultCollector(String iPath, String vPath, String outPath, Configuration conf) throws IOException, ClassNotFoundException, InterruptedException {
