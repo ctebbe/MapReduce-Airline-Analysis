@@ -9,6 +9,12 @@ import org.apache.hadoop.io.Text;
 public class Utils {
     public static final String FORMAT = "%02d";
 
+    public static void main(String[] args) {
+        System.out.println(Utils.getInt("100"));
+        System.out.println(Utils.getInt("-100"));
+        System.out.println(Utils.getInt("NA"));
+    }
+
     public static IntWritable getSumDelay(String[] fields) {
         return new IntWritable(
             Utils.getInt(fields[Index.ARRDELAY]) +
@@ -22,23 +28,28 @@ public class Utils {
 
     public static int getInt(String str) {
         try {
-            return Integer.parseInt(str);
-        } catch(Exception e) {
-
-        } finally {
-            return 0;
+            System.out.println(str);
+            int tmp = Integer.parseInt(str);
+            if(tmp < 0) tmp=0;
+            return tmp;
+        } catch(NumberFormatException e) {
+            //e.printStackTrace();
         }
+        return 0;
     }
 
-    public static boolean isIntegerValue(Text query) {
-        String str = query.toString();
+    public static boolean isIntegerValue(String query) {
         try {
-            Integer.parseInt(str);
+            Integer.parseInt(query);
             return true;
         } catch(Exception e) {}
         finally {
             return false;
         }
+    }
+
+    public static boolean isIntegerValue(Text query) {
+        return isIntegerValue(query.toString());
     }
 
     public static String getTimeOfDay(String hhmm) {

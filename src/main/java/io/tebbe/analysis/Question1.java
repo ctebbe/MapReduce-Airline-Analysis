@@ -17,24 +17,26 @@ import java.io.IOException;
 public class Question1 {
 
     public static class Map extends Mapper<LongWritable, Text, Text, IntWritable> {
+        @Override
         public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
             String[] fields = value.toString().split(",");
             Text keyTime = new Text(
-                    Utils.getTimeOfDay(fields[Index.DEPTIME]) +
-                    Utils.getDayOfWeek(fields[Index.DAYOFWEEK]) +
-                    Utils.getMonth(fields[Index.MONTH]));
+                    fields[Index.DEPTIME] + "," +
+                    fields[Index.DAYOFWEEK] + "," +
+                    fields[Index.MONTH]);
             IntWritable sumDelay = Utils.getSumDelay(fields);
             context.write(keyTime, sumDelay);
         }
     }
 
     public static class Reduce extends Reducer<Text, IntWritable, Text, Text> {
+        @Override
         public void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
             int sumDelay = 0;
             for(IntWritable delay : values) {
                 sumDelay += delay.get();
             }
-            context.write(key, new Text(String.valueOf(sumDelay)));
+            context.write(new Text(String.valueOf(sumDelay)), key);
         }
     }
 }

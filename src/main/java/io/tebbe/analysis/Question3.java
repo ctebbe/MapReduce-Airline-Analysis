@@ -16,21 +16,49 @@ import java.io.IOException;
  */
 public class Question3 {
 
-    public static class Map extends Mapper<LongWritable, Text, Text, IntWritable> {
+    public static class Map0 extends Mapper<LongWritable, Text, Text, IntWritable> {
         public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
             String[] fields = value.toString().split(",");
-            Text keyYearAirport = new Text(fields[Index.YEAR] + fields[Index.ORIGIN]);
+            Text keyYearAirport = new Text(fields[Index.ORIGIN] +","+ fields[Index.YEAR]);
             context.write(keyYearAirport , new IntWritable(1));
         }
     }
 
-    public static class Reduce extends Reducer<Text, IntWritable, Text, Text> {
+    public static class Reduce0 extends Reducer<Text, IntWritable, Text, Text> {
         public void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
             int sum = 0;
             for(IntWritable value : values) {
                 sum += value.get();
             }
-            context.write(key, new Text(String.valueOf(sum)));
+            context.write(new Text(String.valueOf(sum)), key);
+        }
+    }
+
+    public static class Map0_1 extends Mapper<LongWritable, Text, Text, Text> {
+        public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
+            String[] delayAndKey = value.toString().split("\\t");
+            String[] airportAndYear = delayAndKey[1].split(",");
+            context.write(new Text(airportAndYear[0]), new Text(airportAndYear[1] +","+ delayAndKey[0]));
+        }
+    }
+
+    public static class Map1 extends Mapper<LongWritable, Text, Text, Text> {
+        public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
+            String[] values = value.toString().split(",");
+            context.write(new Text(values[0].replace("\"", "").trim()), new Text(values[1].replace("\"", "").trim()+", "));
+        }
+    }
+
+    /*
+    ABE \t Lehigh airport
+    ABE \t 1987,1258
+    ...
+     */
+    public static class Reduce1 extends Reducer<Text, Text, Text, Text> {
+        public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
+            for(Text value : values) {
+                context.write(key, value);
+            }
         }
     }
 }
