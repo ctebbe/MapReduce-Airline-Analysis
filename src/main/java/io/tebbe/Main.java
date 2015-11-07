@@ -4,6 +4,7 @@ import io.tebbe.analysis.Question1;
 import io.tebbe.results.SortByValue;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
@@ -25,6 +26,8 @@ public class Main {
     public static final int PORT = 32401;
 
     private static final String FILENAME = "/part-r-00000";
+    private static final String MAINDATA = "/data/main";
+
 
     public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException {
         Main main = new Main();
@@ -40,14 +43,15 @@ public class Main {
         question1.setOutputValueClass(Text.class);
 
         question1.setMapperClass(Question1.Map.class);
-        question1.setMapOutputValueClass(Text.class);
+        question1.setMapOutputValueClass(IntWritable.class);
         question1.setInputFormatClass(TextInputFormat.class);
 
         question1.setReducerClass(Question1.Reduce.class);
         question1.setOutputFormatClass(TextOutputFormat.class);
 
+        FileInputFormat.setInputDirRecursive(question1, true);
         FileInputFormat.addInputPath(question1, new Path("/data/main"));
-        FileOutputFormat.setOutputPath(question1, new Path("/question1"));
+        FileOutputFormat.setOutputPath(question1, new Path("/home/question1"));
         question1.waitForCompletion(true);
     }
 
