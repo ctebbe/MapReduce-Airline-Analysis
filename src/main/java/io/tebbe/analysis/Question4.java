@@ -22,7 +22,7 @@ public class Question4 {
         key = airport code
         value = weather delay
      */
-    public static class MapOriginWeatherDelay extends Mapper<LongWritable, Text, Text, IntWritable> {
+    public static class Map0 extends Mapper<LongWritable, Text, Text, IntWritable> {
         public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
             String[] fields = value.toString().split(",");
             Text keyAirport = new Text(fields[Index.ORIGIN]);
@@ -35,7 +35,7 @@ public class Question4 {
         key = airport code
         value = summed weather delay
      */
-    public static class ReduceOriginWeatherDelay extends Reducer<Text, IntWritable, Text, Text> {
+    public static class Reduce0 extends Reducer<Text, IntWritable, Text, Text> {
         public void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
             int sum = 0;
             for(IntWritable value : values) {
@@ -49,11 +49,11 @@ public class Question4 {
         key = airport code
         value = weather delay
      */
-    public static class MapAirportDelay extends Mapper<LongWritable, Text, Text, Text> {
+    public static class Map0_1 extends Mapper<LongWritable, Text, Text, Text> {
         public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
             String[] fields = value.toString().split("\\t");
             Text keyAirport = new Text(fields[0]);
-            Text delay = new Text(String.valueOf(Utils.getInt(fields[1])));
+            Text delay = new Text(fields[1]);
             context.write(keyAirport, delay);
         }
     }
@@ -62,7 +62,7 @@ public class Question4 {
         key = airport code
         value = city
      */
-    public static class MapCities extends Mapper<LongWritable, Text, Text, Text> {
+    public static class Map1 extends Mapper<LongWritable, Text, Text, Text> {
         public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
             String[] fields = value.toString().split(",");
             Text keyAirportCode = new Text(fields[0]);
@@ -75,7 +75,7 @@ public class Question4 {
         key = city
         value = weather delay
      */
-    public static class ReduceCitiesDelay extends Reducer<Text, Text, Text, Text> {
+    public static class Reduce1 extends Reducer<Text, Text, Text, Text> {
         public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
             Text keyCity = null;
             List<Text> delays = new ArrayList<Text>();

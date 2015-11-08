@@ -10,9 +10,8 @@ public class Utils {
     public static final String FORMAT = "%02d";
 
     public static void main(String[] args) {
-        System.out.println(Utils.getInt("100"));
-        System.out.println(Utils.getInt("-100"));
-        System.out.println(Utils.getInt("NA"));
+        System.out.println(isIntegerValue("Lehigh airport, ".split(",")[1]));
+        System.out.println(isIntegerValue("1987,1258".split(",")[1]));
     }
 
     public static IntWritable getSumDelay(String[] fields) {
@@ -40,12 +39,10 @@ public class Utils {
 
     public static boolean isIntegerValue(String query) {
         try {
-            Integer.parseInt(query);
+            Integer.parseInt(query.trim());
             return true;
         } catch(Exception e) {}
-        finally {
-            return false;
-        }
+        return false;
     }
 
     public static boolean isIntegerValue(Text query) {

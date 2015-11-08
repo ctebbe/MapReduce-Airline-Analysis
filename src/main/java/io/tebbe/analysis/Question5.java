@@ -22,7 +22,7 @@ public class Question5 {
         key = carrier code
         value = total_delay_mins
      */
-    public static class MapCarrierDelay extends Mapper<LongWritable, Text, Text, IntWritable> {
+    public static class Map0 extends Mapper<LongWritable, Text, Text, IntWritable> {
         public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
             String[] fields = value.toString().split(",");
             Text keyCarrier = new Text(fields[Index.UNIQUECARRIER]);
@@ -35,7 +35,7 @@ public class Question5 {
         key = carrier code
         value = carrier_delay \t num_delayed_flights \t avg_delay
      */
-    public static class ReduceCarrierDelay extends Reducer<Text, IntWritable, Text, Text> {
+    public static class Reduce0 extends Reducer<Text, IntWritable, Text, Text> {
         public void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
             int numDelayedFlights=0, numFlights=0, sumDelay=0;
             for(IntWritable value : values) {
@@ -46,8 +46,29 @@ public class Question5 {
                 }
                 numFlights++;
             }
-            Text outValue = new Text(sumDelay + "\t" + numDelayedFlights + "\t" + (sumDelay/numFlights));
+            Text outValue = new Text(sumDelay + "," + numDelayedFlights + "," + (sumDelay/numFlights));
             context.write(key, outValue);
+        }
+    }
+
+    public static class Map0_1 extends Mapper<LongWritable, Text, Text, Text> {
+        public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
+            String[] carrierAndPayload = value.toString().split("\\t");
+            context.write(new Text(carrierAndPayload[0]), new Text(carrierAndPayload[1]));
+        }
+    }
+
+    public static class Map1 extends Mapper<LongWritable, Text, Text, Text> {
+        public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
+            String[] fields = value.toString().split(",");
+            context.write(new Text(fields[0]), new Text(fields[1] +", "));
+        }
+    }
+
+    public static class Reduce1 extends Reducer<Text, Text, Text, Text> {
+        public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
+            for(Text value : values) {
+            }
         }
     }
 }
